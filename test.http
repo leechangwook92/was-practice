@@ -1,0 +1,1 @@
+GET http://localhost:8080/calculate?operand1=11&operator=*&oprand2=55
