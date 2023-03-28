@@ -8,12 +8,16 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class CustomWebApplicationServer {
 
     private final int port;
 
-    private static final Logger logger = LoggerFactory.getLogger(CustomWebApplicationServer.class);
+    private final ExecutorService executorService = Executors.newFixedThreadPool(10);
+
+    private static final Logger logger = LoggerFactory.getLogger(CustomWebApplicationServer.class); // thread pool 미리 생성
 
     public CustomWebApplicationServer(int port) {
         this.port = port;
@@ -29,7 +33,7 @@ public class CustomWebApplicationServer {
             while ((clientSocket = serverSocket.accept()) != null) {
                 logger.info("[CustomWebApplicationServer] !");
 
-                new Thread(new ClientRequestHandler(clientSocket)).start();
+                executorService.execute(new ClientRequestHandler(clientSocket));
 
                 /**
                  * Step1 - 사용자 요청을 메인 Thread가 처리하도록 한다.
